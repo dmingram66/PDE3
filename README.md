@@ -5,7 +5,7 @@ Each workbook covers a different topic from the course.  Many of them make use o
 
 <code>from refinement_analysis import refinement_analysis</code>
 
-There are two types of workbooks *Worked examples* and *Laboratory Problems*.  Worked examples are complete solutions with explanations of work being conducted.  The *laboratory problems* are incomplete workbooks which contain the fundamental tools needed in constructing the solution but will need additional Python code to be written.
+These workbooks contain *Worked examples*.  These are complete solutions with explanations of work being conducted.  Separate *laboratory problems* will be issued which are incomplete and will involve both mathematical and numerical methods for the solution of a particular problem. These will contain the fundamental python tools needed to contruct a numerical solution but will need Python code to be written.
 
 All code is covered by the Creative-Commons by Attribution Licenses and is copyright to The School of Engineering, University of Edinburgh.  The code was written by Professor David Ingram.
 
