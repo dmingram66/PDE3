@@ -18,5 +18,5 @@ All code is covered by the Creative-Commons by Attribution Licenses and is copyr
 6. Source Terms - Solving the Poisson equation [i.e. the inhomogenous version of the Laplacian] (needs <code>refinement_analysis.py</code>). 
 7. Explicit Parabolic Solver - The Forward Time-Centered Space (FTCS) solver for the solution of 1-D parabolic equations (needs <code>refinement_analysis.py</code>).
 8. Implicit Parabolic Solver - Using the Crank-Nicholson method to solver for the solution of 1-D parabolic equations (needs <code>refinement_analysis.py</code>).
-9. Hyperbolic Solver - Using the Lax-Wendroff and First Order Upwind schemes to solve 1 1D linear advection problem with periodic boundary conditions.  
+9. Hyperbolic Solver - Using the Lax-Wendroff and First Order Upwind schemes to solve the 1D linear advection problem with periodic boundary conditions.  
 
