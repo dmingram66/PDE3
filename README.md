@@ -20,3 +20,5 @@ All code is covered by the Creative-Commons by Attribution Licenses and is copyr
 8. Implicit Parabolic Solver - Using the Crank-Nicholson method to solver for the solution of 1-D parabolic equations (needs <code>refinement_analysis.py</code>).
 9. Hyperbolic Solver - Using the Lax-Wendroff and First Order Upwind schemes to solve the 1D linear advection problem with periodic boundary conditions.  
 
+## Laboratories
+The Laboratories folder includes a Jupyter workbook for each of the Laboratories from weeks 1 to 10.
