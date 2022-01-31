@@ -1,4 +1,4 @@
-###W01-ex1_parta_start_md
+###W01_ex1_parta_start_md
 **Solution:**
 $$
 \newcommand{\vect}[1]{\bm #1}
@@ -6,10 +6,23 @@ $$
 \newcommand{\pderiv}[2]{\frac{\partial #1}{\partial #2}}
 \newcommand{\pdderiv}[2]{\frac{\partial^2 #1}{\partial #2^2}}
 $$
-###W01-ex1_parta_end
+Calculate the first and second partial derivatives of $u(x,y)$ with respect to $x$ and $y$ to get
+\begin{align}
+\pderiv{u(x,y)}{x} &= 4x^3 - 12 x y^2 \nonumber\\
+\pdderiv{u(x,y)}{x} &= 12x^2 - 12 y^2 \label{eq:ES1-Q1_uxx}\\
+\pderiv{u(x,y)}{y} &= - 12 x^2 y + 4 y^3 \nonumber\\
+\pdderiv{u(x,y)}{y} &= - 12x^2 + 12 y^2
+\label{eq:ES1-Q1_uyy}
+\end{align}
+Inserting Eqs. \ref{eq:ES1-Q1_uxx} and \ref{eq:ES1-Q1_uyy} into the Laplace equation gives
+$$
+0 = \grad^2u = \pdderiv{u(x,y)}{x} + \pdderiv{u(x,y)}{y} = 12x^2 - 12 y^2 - 12x^2 + 12 y^2 = 0
+$$
+thus showing that $u(x,y)$ satisfies the Laplace equation.
+###W01_ex1_parta_end
 
 
-###W01-ex1_partb_start_py
+###W01_ex1_partb_start_py
 # Import the required libraries
 %matplotlib inline
 
@@ -20,34 +33,154 @@ import matplotlib.pyplot as plt
 from matplotlib import cm
 from matplotlib.ticker import LinearLocator, FormatStrFormatter
 import numpy as np
-###W01-ex1_partb_end
 
-
-###W01-ex1_partc_start_md
-**Solution:**
-
-###W01-ex1_partc_end
-
-
-###W01-ex2_parta_start_md
-**Solution:**
-
-###W01-ex2_parta_end
-
-
-###W01-ex2_partb_start_py
 # Define the grid and function values
-###W01-ex2_partb_end
+nx = 30
+ny = 40
+x = np.linspace(0, 1, nx, endpoint=True)
+y = np.linspace(0, 1, ny, endpoint=True)
+dx = (x[-1] - x[0])/nx
+dy = (y[-1] - y[0])/ny
+X, Y = np.meshgrid(x, y)
+Z = X**4 - 6 * X**2 * Y**2 + Y**4
+
+# Generate the plot
+fig = plt.figure()
+ax = plt.axes(projection='3d')
+
+# Plot the surface
+surf = ax.plot_surface(X, Y, Z, cmap=cm.coolwarm,
+                       linewidth=0, antialiased=False)
+
+# Customize the z axis
+#ax.set_zlim(-1, 1.01)
+ax.zaxis.set_major_locator(LinearLocator(10))
+ax.zaxis.set_major_formatter(FormatStrFormatter('%.01f'))
+
+ax.set_xlabel('x axis')
+ax.set_ylabel('y axis')
+ax.set_zlabel(r'u(x, y)')
+
+# Add a color bar which maps values to colors
+fig.colorbar(surf, shrink=0.5, aspect=5)
+
+plt.savefig("W1_PDE3_Exercise_1.png")
+plt.show()
+###W01_ex1_partb_end
 
 
-###W01-ex2_partc_start_md
+###W01_ex1_partc_start_md
 **Solution:**
 
-###W01-ex2_partc_end
+By inserting the boundary values into the equation for $u(x,t)$ we get the following boundary conditions 
+\begin{align*}
+u(x, 0) &= x^4, \qquad &0\le x\le 1 & \to \text{bottom boundary} \\
+u(x, 1) &= x^4 - 6x^2 + 1, \qquad &0\le x\le 1 & \to \text{top boundary} \\
+u(0, y) &= y^4, \qquad &0\le y\le 1 & \to \text{left boundary} \\
+u(1, y) &= 1 - 6y^2 + y^4, \qquad &0\le y\le 1 & \to \text{right boundary} 
+\end{align*}
+###W01_ex1_partc_end
 
 
-###W01-ex3_start_md
+###W01_ex2_parta_start_md
+**Solution:**
+$$
+\newcommand{\vect}[1]{\bm #1}
+\newcommand{\grad}{\nabla}
+\newcommand{\pderiv}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\pdderiv}[2]{\frac{\partial^2 #1}{\partial #2^2}}
+$$
+Calculate the first and second partial derivatives of $u(x,y)$ with respect to $x$ and $y$.
+\begin{align}
+\pderiv{u}{x} &= -e^{-x} \sin(y) \nonumber \\
+\pdderiv{u}{x} &= e^{-x} \sin(y) \label{eq:ES1-Q2_uxx} \\
+\pderiv{u}{y} &= e^{-x} \cos(y) \nonumber \\
+\pdderiv{u}{y} &= -e^{-x} \sin(y) \label{eq:ES1-Q2_uyy}
+\end{align}
+Inserting Eqs.~\ref{eq:ES1-Q2_uxx} and \ref{eq:ES1-Q2_uyy} into the Laplace equation gives
+\[
+0 = \grad^2u = \pdderiv{u(x,y)}{x} + \pdderiv{u(x,y)}{y} = e^{-x} \sin(y) - e^{-x} \sin(y) = 0
+\]
+thus showing that $u(x,y)$ satisfies the Laplace equation.
+###W01_ex2_parta_end
+
+
+###W01_ex2_partb_start_py
+# Define the grid and function values
+nx = 30
+ny = 40
+x = np.linspace(0, 1, nr, endpoint=True)
+y = np.linspace(0, np.pi, ntheta, endpoint=True)
+dx = (x[-1] - x[0])/nx
+dy = (y[-1] - y[0])/ny
+X, Y = np.meshgrid(x, y)
+Z = np.exp(-X) * np.sin(Y)
+
+# Generate the plot
+fig = plt.figure()
+ax = plt.axes(projection='3d')
+
+# Plot the surface
+surf = ax.plot_surface(X, Y, Z, cmap=cm.coolwarm,
+                       linewidth=0, antialiased=False)
+
+# Customize the z axis
+#ax.set_zlim(-1, 1.01)
+ax.zaxis.set_major_locator(LinearLocator(10))
+ax.zaxis.set_major_formatter(FormatStrFormatter('%.01f'))
+
+ax.set_xlabel('x axis')
+ax.set_ylabel('y axis')
+ax.set_zlabel(r'u(x, y)')
+
+# Add a color bar which maps values to colors
+fig.colorbar(surf, shrink=0.5, aspect=5)
+
+plt.savefig("W1_PDE3_Exercise_2.png")
+plt.show()
+###W01_ex2_partb_end
+
+
+###W01_ex2_partc_start_md
 **Solution:**
 
+By inserting the boundary values into the equation for $u(x,t)$ we get the following boundary conditions 
+\begin{align*}
+u(x, 0) &= 0, \qquad &0\le x\le 1 & \to \text{bottom boundary} \\
+u(x, \pi) &= 0, \qquad &0\le x\le 1 & \to \text{top boundary} \\
+u(0, y) &= \sin(y), \qquad &0\le y\le \pi & \to \text{left boundary} \\
+u(1, y) &= e^{-1} \sin(y), \qquad &0\le y\le \pi & \to \text{right boundary} 
+\end{align*}
+###W01_ex2_partc_end
 
-###W01-ex3_end
+
+###W01_ex3_start_md
+**Solution:**
+$$
+\newcommand{\vect}[1]{\bm #1}
+\newcommand{\grad}{\nabla}
+\newcommand{\pderiv}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\pdderiv}[2]{\frac{\partial^2 #1}{\partial #2^2}}
+$$
+We start by calculating the partial derivatives of $u(x,t)$ to get
+\begin{align}
+\pderiv{u}{t} &= -k e^{-kt} \cos(mx) \cos(nt) - n e^{-kt} \cos(mx) \sin(nt) \label{eq:ES1-Q3_ut} \\
+\pdderiv{u}{t} &= k^2 e^{-kt} \cos(mx) \cos(nt) + kn e^{-kt} \cos(mx) \sin(nt) \nonumber \\
+ & \quad + kn e^{-kt} \cos(mx) \sin(nt) - n^2 e^{-kt} \cos(mx) \cos(nt) \nonumber \\
+ &= (k^2 - n^2) e^{-kt} \cos(mx) \cos(nt) + 2kn e^{-kt} \cos(mx) \sin(nt) \label{eq:ES1-Q3_utt} \\
+\pderiv{u}{x} &= -me^{-kt} \sin(mx) \cos(nt) \nonumber \\
+\pdderiv{u}{x} &= -m^2e^{-kt} \cos(mx) \cos(nt) \label{eq:ES1-Q3_uxx} 
+\end{align}
+
+Now we substitute the results from equations \ref{eq:ES1-Q3_ut}-\ref{eq:ES1-Q3_uxx} in the partial differential equation. 
+
+\begin{align*}
+- c^2 m^2e^{-kt} \cos(mx) \cos(nt) &= (k^2 - n^2) e^{-kt} \cos(mx) \cos(nt) + 2kn e^{-kt} \cos(mx) \sin(nt) \\
+ & \quad - 2k^2 e^{-kt} \cos(mx) \cos(nt) - 2k n e^{-kt} \cos(mx) \sin(nt) \\
+ &= -(k^2 + n^2) e^{-kt} \cos(mx) \cos(nt)
+\end{align*}
+We can divide the resulting expression with $u(x,t)$ to get the required relationship between the four parameters, thus proving that $u(x,t)$ is a solution as long as the following holds
+$$
+c^2 m^2 = k^2 + n^2 = n^2 + k^2
+$$
+###W01_ex3_end
