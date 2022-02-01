@@ -17,8 +17,9 @@ All code is covered by the Creative-Commons by Attribution Licenses and is copyr
 5. BiCGStab - The Bi-stabilised conjugate gradient method: A fast, itterative, implicit matrix solver to be used in place of the itterative methods we've used previously (needs <code>refinement_analysis.py</code>).
 6. Source Terms - Solving the Poisson equation [i.e. the inhomogenous version of the Laplacian] (needs <code>refinement_analysis.py</code>). 
 7. Explicit Parabolic Solver - The Forward Time-Centered Space (FTCS) solver for the solution of 1-D parabolic equations (needs <code>refinement_analysis.py</code>).
-8. Implicit Parabolic Solver - Using the Crank-Nicholson method to solver for the solution of 1-D parabolic equations (needs <code>refinement_analysis.py</code>).
-9. Hyperbolic Solver - Using the Lax-Wendroff and First Order Upwind schemes to solve the 1D linear advection problem with periodic boundary conditions.  
+9. Implicit Parabolic Solver - Using the Crank-Nicholson method to solver for the solution of 1-D parabolic equations (needs <code>refinement_analysis.py</code>).
+10. 2D Parabolic - Solving 2D parabolic problems using opperator splitting (the solver used is the explicit FTCS scheme, though it could be modified to use Crank-Nicholson).
+11. Hyperbolic Solver - Using the Lax-Wendroff and First Order Upwind schemes to solve the 1D linear advection problem with periodic boundary conditions.  
 
 ## Laboratories
 The Laboratories folder includes a Jupyter workbook for each of the Laboratories from weeks 1 to 10.
