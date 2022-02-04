@@ -23,3 +23,6 @@ All code is covered by the Creative-Commons by Attribution Licenses and is copyr
 
 ## Laboratories
 The Laboratories folder includes a Jupyter workbook for each of the Laboratories from weeks 1 to 10.
+
+## Coursework
+The couursework folder contains Jupyter notebooks needed for the coursework assignments.
