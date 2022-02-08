@@ -1,0 +1,199 @@
+###W02_ex1_parta_start_md
+**Solution:**
+From the lectures or the book we know that the following three functions
+\begin{align*}
+u_1(x,y) =& (A\sin \mu x+B\cos \mu x) \left(Ce^{\mu y}+De^{-\mu y}\right) \\
+u_2(x,y) =&\left(Ae^{\mu x}+Be^{-\mu x}\right)(C\sin \mu y+D\cos \mu y) \\
+u_3(x,y) =& (Ax+B)(Cy+D)
+\end{align*}
+are possible solutions for the Laplace equation. 
+We need to go through the boundary conditions to find which or which combination of these three functions is a solution to the particular problem, i.e. partial differential equation with associated boundary conditions. 
+In addition, we need to use the boundary conditions to find the values for the parameters, i.e. $A$, $B$, $C$, $D$ and $\mu$, in these functions.
+
+The first two boundary conditions \ref{eq:LE2_BC1} and \ref{eq:LE2_BC2} require that the solution has $\sin$ and $\cos$ terms. 
+The $\sinh$ and $\cosh$ terms have only $1$ or $0$ roots and are thus not suitable. 
+Also $u_3$ is not suitable because it won't be zero for $x=1$ and all values of $y$. 
+Thus the solution needs to have the form 
+$$
+u_1(x,y) = (A\sin \mu x+B\cos \mu x) \left(Ce^{\mu y}+De^{-\mu y}\right)
+$$
+
+Dropping the subscript and using the first boundary condition \ref{eq:LE2_BC1} we get
+\begin{align*}
+u(x=0,y) &= (A\sin(\mu 0)+B\cos(\mu 0)) \left(Ce^{\mu y}+De^{-\mu y}\right) \\
+ &= B \left(Ce^{\mu y}+De^{-\mu y}\right) \overset{!}{=} 0 
+\end{align*}
+This needs to hold for all $y\ge0$ which is only possible for $B=0$.
+
+We can write the solution as
+$$
+u(x,y) = \sin(\mu x) \left(\tilde{C}e^{\mu y} + \tilde{D}e^{-\mu y}\right)
+$$
+where $\tilde{C} = AC$ and $\tilde{D} = AD$.
+
+Using the second boundary condition \ref{eq:LE2_BC2} we get
+$$
+u(x=1,y) = \sin(\mu) \left(\tilde{C}e^{\mu y} + \tilde{D}e^{-\mu y}\right) \overset{!}{=} 0 
+$$
+Again this needs to hold for all $y\ge0$ which can only be fulfilled if $\sin(\mu)=0$.
+We know that the sine function is zero for multiples of $\pi$ and thus that $\mu=n\pi$ where $n$ is an integer.
+
+Using the third boundary condition \ref{eq:LE2_BC3} and the fact that $n\pi\ge0$ we can see that $\tilde{C} = 0$. If this were not the case the term $e^{n\pi y}$ would go to infinity for $y\to\infty$.
+
+Thus the solution has the form
+\begin{equation}
+u(x,y) = \sin(n\pi x) \tilde{D}e^{-n\pi y}, \quad n=1,2,\dots
+\label{eq:LE2_solution_form}
+\end{equation}
+
+To fulfil the fourth boundary condition \ref{eq:LE2_BC4}
+$$
+u(x,y=0) = \sin^5\pi x = \frac{1}{16}\left(\sin 5 \pi x - 5 \sin 3\pi x + 10 \sin\pi x \right), \quad 0\le x \le1
+$$
+we need to superimpose the solution \ref{eq:LE2_solution_form}
+$$
+u(x,y) = \sum_{n=1}^\infty \sin(n\pi x) \tilde{D_n}e^{-n\pi y} 
+$$
+Setting this equal to the boundary condition \ref{eq:LE2_BC4} we get
+$$
+u(x,y=0) = \sum_{n=1}^\infty \sin(n\pi x) \tilde{D_n}e^{-n\pi 0} \overset{!}{=}\frac{1}{16}\left(\sin 5 \pi x - 5 \sin 3\pi x + 10 \sin\pi x \right)
+$$
+Since the exponential term is $1$ we immediately see that most $\tilde{D}_n$ are zero except for $\tilde{D}_1 = \frac{10}{16}$, $\tilde{D}_3 = -\frac{5}{16}$ and $\tilde{D}_5 = \frac{1}{16}$.
+
+The complete solution is
+$$
+u(x,y) = \frac{1}{16}\left(e^{-5\pi y}\sin 5 \pi x  - 5 e^{-3\pi y}\sin 3\pi x +e^{-\pi y} 10 \sin\pi x \right)
+$$
+for $0\le x\le1$ and $y\ge0$.
+###W02_ex1_parta_end
+
+
+###W02_ex1_partb_start_py
+# Import the required libraries
+%matplotlib inline
+
+# This import registers the 3D projection, but is otherwise unused.
+from mpl_toolkits.mplot3d import Axes3D  
+
+import matplotlib.pyplot as plt
+from matplotlib import cm
+from matplotlib.ticker import LinearLocator, FormatStrFormatter
+import numpy as np
+
+# Define the grid and function values
+ymax = 4
+nx = 30
+ny = 40
+x = np.linspace(0, 1, nx, endpoint=True)
+y = np.linspace(0, ymax, ny, endpoint=True)
+dx = (x[-1] - x[0])/nx
+dy = (y[-1] - y[0])/ny
+X, Y = np.meshgrid(x, y)
+Z = 1/16 * (np.exp(-5*np.pi*Y) * np.sin(5*np.pi*X) - 5*np.exp(-3*np.pi*Y) * np.sin(3*np.pi*X) + 10*np.exp(-np.pi*Y) * np.sin(np.pi*X))
+
+# Generate the plot
+fig = plt.figure(figsize=plt.figaspect(0.3))
+ax = fig.add_subplot(1, 2, 1, projection='3d')
+
+## Plot the surface
+surf = ax.plot_surface(X, Y, Z, cmap=cm.coolwarm,
+                       linewidth=1, antialiased=False)
+
+# Customize the z axis
+ax.zaxis.set_major_locator(LinearLocator(10))
+ax.zaxis.set_major_formatter(FormatStrFormatter('%.01f'))
+
+ax.set_xlabel('x axis')
+ax.set_ylabel('y axis')
+ax.set_zlabel(r'u(x, y)')
+
+# Add a color bar which maps values to colors
+fig.colorbar(surf, shrink=0.5, aspect=5)
+
+## Plot the contours
+ax = fig.add_subplot(1, 2, 2)
+#cp = ax.contour(X, Y, Z, levels=32)
+cp = ax.contour(X, Y, Z, levels=[0, 0.003125, 0.00625, 0.0125, 0.025, 0.05, 0.1, 0.2, 0.4, 0.8])
+
+ax.set_xlabel('x axis')
+ax.set_ylabel('y axis')
+
+# Add a color bar which maps values to colors
+fig.colorbar(cp, shrink=0.5, aspect=5)
+
+plt.savefig("W2_PDE3_Exercise_1.png")
+plt.show()
+###W02_ex1_partb_end
+
+###W02_ex1_partc_start_py
+def Jacobi(mesh,tol=0.5e-7,maxit=10000):
+    '''Jacobi itteration applied to the grid stored in mesh.  
+    We will continue itterating until the difference between
+    u^{n+1} and u^n is less than tol. We will also stop if 
+    we have done more than maxit itterations.
+    
+    The solution stored in the mesh.u variable is updated'''
+    
+    # calculate the coefficients
+    beta = mesh.Delta_x()/mesh.Delta_y()
+    beta_sq = beta**2
+    C_beta = 1/(2*(1+beta_sq))
+    
+    # initialise u_new 
+    u_new = mesh.u.copy()
+    
+    # itteration
+    for it in range(maxit):
+        u_new[1:-1,1:-1] = C_beta*(mesh.u[:-2,1:-1]+mesh.u[2:,1:-1]+
+                                  beta_sq*(mesh.u[1:-1,:-2]+mesh.u[1:-1,2:]))
+        
+        # compute the difference between the new and old solutions
+        err = np.max(abs(mesh.u-u_new))/np.max(mesh.u)
+        
+        # update the solution
+        mesh.u = np.copy(u_new)
+        
+        # converged?
+        if err < tol:
+            break
+    
+    if it+1 == maxit:
+        print('Jacobi itteration failed to converge, error = {}'.format(err))
+    
+    return it+1, err # return the number of itterations and the final residual
+
+def set_up_pde(ni,nj):
+    # set up a mesh
+    mesh = Grid(ni,nj)
+    mesh.set_extent(1.0,4.0)
+    mesh.generate()
+    # now the bottom boundary condition
+    mesh.u[0,:]=np.sin(np.pi*mesh.x[0,:])**5
+    return mesh
+
+# set up a mesh to 
+exercise2 = set_up_pde(41,161)
+print(test)
+
+# and plot the boundary values.
+plt.plot(exercise2.x[0,:],exercise2.u[0,:],'o')
+plt.title('Bottom boundary')
+plt.xlabel('x')
+plt.ylabel('u')
+plt.show()
+
+# solve the equations
+itt, err = Jacobi(exercise2)
+print('Converged after {} itterations, final residual is {}'.format(itt,err))
+
+# plot the solution
+fig, ax1 = plt.subplots()
+cmap = plt.get_cmap('jet')
+cf = ax1.contourf(exercise2.x,exercise2.y,exercise2.u,cmap=cmap)
+fig.colorbar(cf, ax=ax1)
+ax1.set_title(f'Exercise 2 ({test.Ni} x {test.Nj} grid)')
+plt.show()
+
+
+###W02_ex1_partc_end
+

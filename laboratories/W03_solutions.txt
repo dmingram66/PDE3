@@ -1,0 +1,269 @@
+###W03_ex1_parta_start_md
+**Solution:**
+$$
+\newcommand{\vect}[1]{\bm #1}
+\newcommand{\grad}{\nabla}
+\newcommand{\pderiv}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\pdderiv}[2]{\frac{\partial^2 #1}{\partial #2^2}}
+$$
+
+The insulated sides at $\pm a$ can be modelled through a Neumann boundary condition with zero flux. The Dirichlet boundary at $y=0$ has a discontinuity at $x=0$ and need to be described with different functions for positive and negative $x$.
+
+Translating the description of the boundary conditions into equation form results in:
+\begin{align}
+u(x, y\to\infty) &= 0, \quad -a\le x \le a \label{eq:LE3_BC1}\\
+\pderiv{u(x=\pm a, y)}{x} &= 0, \quad y\ge0,  \label{eq:LE3_BC2}\\
+u(x, y=0) &= \begin{cases} -T &\mbox{if }-a\le x<0 \\ 
+    T &\mbox{if }0< x\le a \end{cases} \label{eq:LE3_BC3} 
+\end{align}
+The Neumann boundary condition \ref{eq:LE3_BC2} corresponds to the insulated sides of the domain: a zero flux indicates that no heat is lost through the sides.
+###W03_ex1_parta_end
+
+
+###W03_ex1_partb_start_md
+**Solution:**
+
+From the lectures or the book we know that the following three functions
+\begin{align*}
+u_1(x,y) =& (A\sin \mu x+B\cos \mu x) \left(Ce^{\mu y}+De^{-\mu y}\right) \\
+u_2(x,y) =&\left(Ae^{\mu x}+Be^{-\mu x}\right)(C\sin \mu y+D\cos \mu y) \\
+u_3(x,y) =& (Ax+B)(Cy+D)
+\end{align*}
+are possible solutions for the Laplace equation. 
+
+The insulating boundary condition at $x = \pm a$ can only be achieved by solution $u_1$. The other two solutions would require that $A=B=0$ and thus would be the trivial solution $u(x,y) = 0$.
+
+The condition for $y\to\infty$ can only be fulfilled for solution $u_1$ if $C=0$; otherwise it would go off to infinity for $y\to\infty$. This leaves the solution
+$$
+u(x,y) = (A\sin \mu x+B\cos \mu x) De^{-\mu y}
+$$
+
+The condition at $y=0$ is an odd function which suggests a solution comprised of odd functions. For this reason we consider the separated solutions
+$$
+u(x,y) = b_\mu \exp(-\mu y) \sin(\mu x)
+$$
+where $b_\mu = AD$ for the given value of $\mu$.
+
+To fulfil the insulating boundary conditions we calculate the derivative of $u$ with respect to $x$ and set it to zero at $\pm a$. For this to be fulfilled we need
+$$
+\mu a = \left(n+\frac{1}{2}\right)\pi, \quad n=0,1,2,\dots
+$$
+
+Thus, the solution takes the form
+$$
+u(x,y) = \sum_{n=0}^\infty b_n \exp\left[-\left(n+\frac{1}{2}\right)\frac{\pi y}{a}\right] \sin\left[\left(n+\frac{1}{2}\right)\frac{\pi x}{a}\right]
+$$
+where we have replaced $b_\mu$ with $b_n$.
+
+The coefficients $b_n$ can be found by using the condition at $y = 0$
+\begin{align*}
+u(x,y=0) &= \sum_{n=0}^\infty b_n \exp\left[-\left(n+\frac{1}{2}\right)\frac{\pi 0}{a}\right] \sin\left[\left(n+\frac{1}{2}\right)\frac{\pi x}{a}\right] \\
+&= \sum_{n=0}^\infty b_n \sin\left[\left(n+\frac{1}{2}\right)\frac{\pi x}{a}\right] \overset{!}{=}
+\begin{cases} -T &\mbox{if }-a\le x<0 \\ 
+    T &\mbox{if }0< x\le a \end{cases}
+\end{align*}
+
+The coefficients $b_n$ can be found from the integrals
+\begin{align*}
+b_n =& \frac{2}{2a}\int_{-a}^{a} sign(x)T \sin\left[\left(n+\frac{1}{2}\right)\frac{\pi x}{a}\right] dx \\
+=& -\frac{2}{2a}\int_{-a}^{0} T \sin\left[\left(n+\frac{1}{2}\right)\frac{\pi x}{a}\right] dx \\
+&+ \frac{2}{2a}\int_{0}^{a} T \sin\left[\left(n+\frac{1}{2}\right)\frac{\pi x}{a}\right] dx, \quad n=0,1,2,\dots
+\end{align*}
+
+We can simplify the integrals because the integrand over the interval from $-a$ to $a$ is even, and solve the resulting integral.
+\begin{align*}
+b_n &= \frac{2}{2a}\int_{-a}^{a} sign(x)T \sin\left[\left(n+\frac{1}{2}\right)\frac{\pi x}{a}\right] dx  = \frac{2}{a}\int_{0}^{a} T \sin\left[\left(n+\frac{1}{2}\right)\frac{\pi x}{a}\right] dx \\
+ &= \frac{2T}{a} \left[\frac{-\cos\left[\left(n+\frac{1}{2}\right)\frac{\pi x}{a}\right]}{\left(n+\frac{1}{2}\right)\frac{\pi}{a}} \right]_0^a =  \frac{2T}{a} \left[0 + \frac{1}{\left(n+\frac{1}{2}\right)\frac{\pi}{a}} \right] = \frac{2T}{a} \frac{2a}{2\left(n+\frac{1}{2}\right)\pi} \\
+ &= \frac{4T}{(2n + 1)\pi}, \quad n=0,1,2,\dots
+\end{align*}
+These parameter values match the parameters from the question text, as required.
+###W03_ex1_partb_end
+
+
+###W03_ex1_partc_start_py
+# Import the required libraries
+%matplotlib inline
+
+# This import registers the 3D projection, but is otherwise unused.
+from mpl_toolkits.mplot3d import Axes3D  
+
+import matplotlib.pyplot as plt
+from matplotlib import cm
+from matplotlib.ticker import LinearLocator, FormatStrFormatter
+import numpy as np
+
+def uxy(X, Y, a = 1, T = 10, Nmax = 10):
+    ua = np.zeros(np.shape(X))
+    for k in range(0, Nmax):
+        ua = ua + 1/(2*k+1) * np.exp(-(k+0.5)*np.pi*Y/a) * np.sin((k+0.5)*np.pi*x/a) 
+    return 4*T/np.pi * ua
+
+
+# Define the grid and function values
+T = 10
+a = 1
+ymax = 3
+nx = 30
+ny = 40
+x = np.linspace(-a, a, nx, endpoint=True)
+y = np.linspace(0, ymax, ny, endpoint=True)
+dx = (x[-1] - x[0])/nx
+dy = (y[-1] - y[0])/ny
+X, Y = np.meshgrid(x, y)
+Z = uxy(X, Y, a, T, 100)
+
+# Generate the plot
+fig = plt.figure(figsize=plt.figaspect(0.3))
+ax = fig.add_subplot(1, 2, 1, projection='3d')
+
+## Plot the surface
+surf = ax.plot_surface(X, Y, Z, cmap=cm.coolwarm,
+                       linewidth=1, antialiased=False)
+
+# Customize the z axis
+ax.zaxis.set_major_locator(LinearLocator(10))
+ax.zaxis.set_major_formatter(FormatStrFormatter('%.01f'))
+
+ax.set_xlabel('x axis')
+ax.set_ylabel('y axis')
+ax.set_zlabel(r'u(x, y)')
+
+# Add a color bar which maps values to colors
+fig.colorbar(surf, shrink=0.5, aspect=5)
+
+## Plot the contours
+ax = fig.add_subplot(1, 2, 2)
+cp = ax.contour(X, Y, Z, levels=32)
+
+ax.set_xlabel('x axis')
+ax.set_ylabel('y axis')
+
+# Add a color bar which maps values to colors
+fig.colorbar(cp, shrink=0.5, aspect=5)
+
+plt.savefig("W3_PDE3_Exercise_1.png")
+plt.show()
+
+###W03_ex1_partc_switch_md
+Test different cut-off points by calculating the sum of all values of the solution as well as the sum of the square of all values of the solution.
+
+###W03_ex1_partc_switch_py
+print('{}, {}, {}'.format("Nmax", "Zsum", "Zsum2"))
+for i in range(10):
+    Nmax = 5 * 2**i
+    Z = uxy(X, Y, a, T, Nmax)
+    
+    # Sum all values of Z
+    Zsum = np.sum(np.sum(Z))
+    # Sum the square of all values of Z
+    Zsum2 = np.sum(np.sum(Z**2))
+    print('{0:2d}, {1:2e}, {2:3f}'.format(Nmax, Zsum, Zsum2))
+###W03_ex1_partc_end
+
+
+###W03_ex1_partd_start_py
+def SOR(mesh,tol=0.5e-7,maxit=10000):
+    '''SOR itteration with checkerboarding 
+    applied to the grid stored in mesh.  
+    We will continue itterating until the difference between
+    u^{n+1} and u^n is less than tol. We will also stop if 
+    we have done more than maxit itterations.
+    
+    The solution stored in the mesh.u variable is updated'''
+    
+    # calculate the optimal value of omega
+    lamda = (np.cos(np.pi/mesh.Ni)+np.cos(np.pi/mesh.Nj))**2/4
+    omega = 2/(1+np.sqrt(1-lamda))
+
+
+    # calculate the coefficients
+    beta = mesh.Delta_x()/mesh.Delta_y()
+    beta_sq = beta**2
+    C_beta = 1/(2*(1+beta_sq))
+    
+    # initialise u_new 
+    u_new = mesh.u.copy()
+    
+    # build the list of k values    
+    offset = mesh.u.shape[1] # how far away are j+1 and j-1
+
+    # create some empty lists
+    centre = []; north = []; east = []; south=[]; west = []  
+    # loop over all the interior points
+    for j in range(1,mesh.Nj-1):
+        for i in range(1,mesh.Ni-1):
+            k=i+offset*j  # calculate the k value
+            # save the south, west, centre, east and north points
+            centre.append(k)
+            north.append(k+offset)
+            east.append(k+1)
+            south.append(k-offset)
+            west.append(k-1)
+
+    # itteration
+    for it in range(maxit):
+        # boundary condition update here
+        u_new[:,0] = u_new[:,2] 
+        u_new[:,-1] = u_new[:,-3] 
+
+        # red squares [::2] means from 0 to n in steps of 2, remember
+        # we are taking alternate values from the lists centre, east,
+        # north, west and south and using them as indicies into the 
+        # u_new array.
+        u_new.flat[centre[::2]] = (1-omega) * u_new.flat[centre[::2]] + \
+                                    omega * C_beta*(u_new.flat[north[::2]]+ \
+                                    u_new.flat[south[::2]]+ \
+                                    beta_sq*(u_new.flat[east[::2]]+ \
+                                             u_new.flat[west[::2]]))
+        
+        # black squares [1::2] means from 1 to n in steps of 2
+        u_new.flat[centre[1::2]] = (1-omega) * u_new.flat[centre[1::2]] + \
+                                    omega * C_beta*(u_new.flat[north[1::2]]+ \
+                                    u_new.flat[south[1::2]]+ \
+                                    beta_sq*(u_new.flat[east[1::2]]+ \
+                                             u_new.flat[west[1::2]]))
+
+        # compute the difference between the new and old solutions, 
+        # were going to use the L2 norm.
+        err = np.linalg.norm(mesh.u-u_new)
+        
+        # update the solution
+        mesh.u = np.copy(u_new)
+        
+        # converged?
+        if err < tol:
+            break
+    
+    if it+1 == maxit:
+        print('Checkerboard Gauss-Seidel itteration failed to converge, error = {}'.format(err))
+    
+    return it+1, err # return the number of itterations and the final residual
+
+# set up the test problem and solve it
+def metal_plate(ni, nj, a=1.0, T=10):
+    # set up a mesh, using 3.0 as the limit on y.
+    mesh = Grid(ni,nj)
+    mesh.set_origin(-a,0.0)
+    mesh.set_extent(2*a, 3.0)
+    mesh.generate()
+    # now the bottom and top boundary conditions
+    mesh.u[0,:]=np.sign(mesh.x[0,:])*T
+    mesh.u[-1,:]=0.0
+    return mesh
+
+test = metal_plate(101,151)
+# we will time it
+start = time.process_time()
+itt, err = SOR(test)
+stop = time.process_time()
+print("Solver took {:.3g} seconds.".format(stop-start))
+print('Converged after {} itterations, final residual is {}'.format(itt,err))
+
+# plot the solution
+fig, ax1 = plt.subplots()
+cmap = plt.get_cmap('jet')
+cf = ax1.contourf(test.x,test.y,test.u,cmap=cmap)
+fig.colorbar(cf, ax=ax1)
+ax1.set_title(f'Metal plate ({test.Ni} x {test.Nj} grid)')
+plt.show()
+###W03_ex1_partd_end
