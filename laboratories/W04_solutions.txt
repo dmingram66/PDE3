@@ -1,0 +1,249 @@
+###W04_ex1_parta_start_md
+**Solution:**
+$$
+\newcommand{\vect}[1]{\bm #1}
+\newcommand{\grad}{\nabla}
+\newcommand{\pderiv}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\pdderiv}[2]{\frac{\partial^2 #1}{\partial #2^2}}
+$$
+
+expanding
+$$T_{ij}=\frac{T_{i-1j}+T_{i+1j}+\beta^2\left(T_{ij-1}+T_{ij-1}\right)}{2(1+\beta^2)}$$
+we have
+$$T_{ij}= \frac{1}{2(1+\beta^2)}T_{i-1j}+\frac{1}{2(1+\beta^2)}T_{i+1j}+\frac{\beta^2}{2(1+\beta^2)}T_{ij-1}+\frac{\beta^2}{2(1+\beta^2)}T_{ij+1} $$
+putting everything on the LHS we have
+$$ -\frac{\beta^2}{2(1+\beta^2)}T_{ij-1}-\frac{1}{2(1+\beta^2)}T_{i-1j}+T_{ij}-\frac{1}{2(1+\beta^2)}T_{i+1j}-\frac{\beta^2}{2(1+\beta^2)}T_{ij+1} = 0 $$
+So  $$r_x=-\frac{1}{2(1+\beta^2)}\text{ and }r_y=-\frac{\beta^2}{2(1+\beta^2)}$$
+###W04_ex1_parta_end
+
+
+###W04_ex1_partb_start_md
+**Solution:**
+
+Starting with $k=0$ we have:
+
+![](figures/LaplaceGrid-k.png)
+
+* For the all the interior points $k=6,\, 7,\, 8,\, 11,\, 12,\, 13,\, 16,\, 17\text{ and }18: b_k=0.0$.
+* On the bottom $k=1,\, 2\text{ and } 3: b_k = -r_yT_{ij-1}$,
+* on the top $k=21,\,22\text{ and } 23: b_k = -r_yT_{ij+1}$,
+* on the left $k=5,\, 10\text{ and }15: b_k = -r_xT_{i-1j}$, and
+* on the right $k=9,\, 14\text{ and }19: b_k = -r_xT_{i+1j}$.
+* At the bottom left corner $k=0: b_k = -r_xT_{i-1j}-r_yT_{ij-1}$,
+* at the bottom right corner $k=4: b_k = -r_xT_{i+1j}-r_yT_{ij-1}$,
+* at the top left corner $k=20: b_k = -r_xT_{i-1j}-r_yT_{ij+1}$, and
+* at the top right corner $k=24: b_k = -r_xT_{i+1j}-r_yT_{ij+1}$.
+###W04_ex1_partb_end
+
+###W04_ex1_partc_start_md
+**Solution:**
+![](figures/SparsityPattern-filled.png)
+
+key: coefficients in $A$ are: <font color='red'>_r_<sub>x</sub></font>
+<font color='orange'>_r_<sub>y</sub></font> and <font color='blue'>1</font>.
+###W04_ex1_partc_end
+
+###W04_ex1_partd_start_py
+def assemble_matrix(mesh):
+    '''assemble the matrix and teh RHS vector'''
+    
+    # how many equations are we solving?
+    N = (mesh.Nj-2)*(mesh.Ni-2)
+    
+    # create an A_matrix
+    A_mat = sps.lil_matrix((N, N), dtype=np.float64)
+    # and a b-vector
+    b_vec = np.zeros(N)
+
+    # calculate the coefficients
+    beta = mesh.Delta_x()/mesh.Delta_y()
+    beta_sq = beta**2
+    R_x = - 1/(2*(1+beta_sq))
+    R_y = beta_sq * R_x
+
+    # matrix assembly  This time we will only put a 1 in the matrix to 
+    # indicate non-zero values
+    for j in range(1, mesh.Nj-1):
+        for i in range(1, mesh.Ni-1):
+            
+            # calculate the k index
+            k = (i-1) + (mesh.Ni-2)*(j-1)
+            
+            # leading diagonal coeficient
+            A_mat[k,k]=1
+            
+            # North boundary
+            if j<mesh.Nj-2:
+                A_mat[k,k+(mesh.Ni-2)]=R_y
+            else:
+                b_vec[k] += -R_y*mesh.u[j+1,i]
+
+            # South boundary
+            if j>1:
+                A_mat[k,k-(mesh.Ni-2)]=R_y
+            else:
+                b_vec[k] += -R_y*mesh.u[j-1,i]
+                
+            # East boundary
+            if i<mesh.Ni-2:
+                A_mat[k,k+1]=R_x
+            else:
+                b_vec[k] += -R_y*mesh.u[j,i+1]
+                
+            # West boundary
+            if i>1:
+                A_mat[k,k-1]=R_x
+            else:
+                b_vec[k] += -R_y*mesh.u[j,i-1]
+    
+    return A_mat, b_vec
+
+###W04_ex1_partd_end
+
+###W04_ex1_parte_start_py
+import scipy.sparse.linalg as LA
+
+x_vec, info = LA.bicgstab(A,b,tol=0.5e-12)
+
+# check it worked
+assert (info == 0)
+
+# test answer
+residual = (A @ x_vec) - b
+
+if np.allclose(residual, np.zeros_like(residual)):
+    print ("Ax = b")
+
+if np.allclose(x_vec, np.ones_like(x_vec)):
+    print ("T=1 at all points.")
+    
+###W04_ex1_parte_switch_md
+
+Ax = b
+
+T=1 at all points.  
+###W04_ex1_parte_end
+
+###W04_ex1_partf_start_py
+def unpack(grid, x):
+    # unpack x_vec into u
+    for j in range(1, grid.Nj-1):
+        for i in range(1, grid.Ni-1):
+            k = (i-1) + (grid.Ni-2)*(j-1)
+            grid.u[j,i]=x_vec[k]
+
+# test it on a 31 x 31 grid
+mesh = Grid(31,31)
+mesh.set_extent(0.2,0.2)
+mesh.generate()
+mesh.u[:,-1] = 250*mesh.x[:,-1]
+mesh.u[-1,:,] = 250*mesh.y[-1,:]
+
+A, b = assemble_matrix(mesh)
+
+x_vec, info = LA.bicgstab(A,b,tol=0.5e-12)
+
+if info == 0:
+    unpack(mesh,x_vec)
+    fig, ax1 = plt.subplots()
+    cmap = plt.get_cmap('jet')
+    cf = ax1.contourf(mesh.x,mesh.y,mesh.u,cmap=cmap, levels = 21)
+    fig.colorbar(cf, ax=ax1)
+    ax1.set_title(f'Heated plate ({mesh.Ni} x {mesh.Nj} grid)')
+    plt.show()
+###W04_ex1_partf_end
+
+###W04_ex1_partg_start_py
+# we need some lists u and dx values
+U_val = []
+dx_val = []
+run_time = []
+n_pts =[]
+for grid_index in range(6,0,-1):
+    ni = 10*2**grid_index + 1
+    nj = 10*2**grid_index + 1
+    n_pts.append(ni*nj)
+    
+    # set up the problem
+    test = Grid(ni,nj)
+    test.set_extent(0.2,0.2)
+    test.generate()
+    test.u[:,-1] = 250*test.x[:,-1]
+    test.u[-1,:,] = 250*test.y[-1,:]
+    print(test)
+
+    # solver the system
+    A, b = assemble_matrix(test)
+    x_vec, info = LA.bicgstab(A,b,tol=0.5e-12)
+    unpack(test,x_vec)
+ 
+    # save dx and the integral
+    dx_val.append(test.Delta_x())
+    U_val.append(integrate_u_dx(test,0.15,0.18,0.18))
+    run_time.append(stop-start)
+          
+    print('Integrated value is ',U_val[-1],'\n')
+
+###W04_ex1_partg_switch_md
+
+Uniform 321x321 grid from (0.0, 0.0) to (0.2, 0.2).
+Boundaries conditions are - left: Dirichlet, right: Dirichlet, top: Dirichlet, bottom: Dirichlet.
+Integrated value is  1.4425235536668422 
+
+Uniform 161x161 grid from (0.0, 0.0) to (0.2, 0.2).
+Boundaries conditions are - left: Dirichlet, right: Dirichlet, top: Dirichlet, bottom: Dirichlet.
+Integrated value is  1.4425213868720983 
+
+Uniform 81x81 grid from (0.0, 0.0) to (0.2, 0.2).
+Boundaries conditions are - left: Dirichlet, right: Dirichlet, top: Dirichlet, bottom: Dirichlet.
+Integrated value is  1.4425135133122116 
+
+Uniform 41x41 grid from (0.0, 0.0) to (0.2, 0.2).
+Boundaries conditions are - left: Dirichlet, right: Dirichlet, top: Dirichlet, bottom: Dirichlet.
+Integrated value is  1.442482024800984 
+
+Uniform 21x21 grid from (0.0, 0.0) to (0.2, 0.2).
+Boundaries conditions are - left: Dirichlet, right: Dirichlet, top: Dirichlet, bottom: Dirichlet.
+Integrated value is  1.4423528686225644 
+
+###W04_ex1_partg_switch_py
+
+from refinement_analysis import refinement_analysis
+# lets to the refinement analysis
+analysis = refinement_analysis(dx_val,U_val)
+analysis.report(r'\int_{0.15}^{0.18}T(x,0.18) dx')
+analysis.graph(True,r'$\int_{75}^{125}h(x,25) dx$',filename='ThermalPlate-refinement.pdf')
+
+
+###W04_ex1_partg_switch_md
+
+Refinement Analysis on 5 grids.
+
+Grid | Delta x | ratio  | $\int_{0.15}^{0.18}T(x,0.18) dx$ 
+--- | --- | --- | ---
+   1 | 0.000625  |   2  | 1.44252
+   2 | 0.00125  |   2  | 1.44252
+   3 | 0.0025   |  2   |1.44251
+   4 |  0.005  |   2  | 1.44248
+   5  |  0.01  | ---  | 1.44235
+
+
+order of convergence, p =   1.86
+
+Grids  |     GCI
+--- | --- 
+ 1  2 | 7.129e-07
+ 2  3 | 2.591e-06
+ 3  4 | 1.036e-05
+ 4  5 |  4.25e-05
+
+ Grid Step | GCI Ratio | Converged
+--- | --- | ---
+ 1 2  2 3  |         1 | True
+ 2 3  3 4  |    0.9086 | False
+ 3 4  4 5  |    0.8859 | False
+
+![](figures/ThermalPlate-Refinement.png)
+
+###W04_ex1_partg_end
+
