@@ -1,0 +1,107 @@
+###W05_ex1_parta_start_md
+**Solution:**
+
+The Laplace transform of the left hand side of the partial differential equation can be found using the derivative property and on the right hand side we can swap the order of integration and differentiation. This gives us the transformed equation
+\begin{align}
+s U(x, s) - u(x, 0) &= \kappa {\cal L} \left\{\frac{\partial^2 u(x,t)}{\partial x^2} \right\} = \kappa\frac{\partial^2 U(x,s)}{\partial x^2} 
+\label{eq:heat_transformed_201912}
+\end{align}
+
+Insert the initial conditions into Eq. (\ref{eq:heat_transformed_201912}) to get 
+\begin{align}
+sU(x, s) - x\exp(-\alpha x) &= \kappa \frac{\partial^2 U(x,s)}{\partial x^2} \nonumber\\
+\Rightarrow \frac{\partial^2 U(x,s)}{\partial x^2} - \frac{s}{\kappa} U(x, s) &= \frac{-1}{\kappa}x\exp(-\alpha x) \label{eq:heat_laplace_201912}
+\end{align}
+
+The differential equation (\ref{eq:heat_laplace_201912}) has the characteristic equation
+\begin{align*}
+m^2 - \frac{s}{\kappa} &= 0 
+\end{align*}
+which has the zeros
+\begin{align*}
+ m_{1,2} &= \pm \sqrt{\frac{s}{\kappa}}
+\end{align*}
+Thus, the complimentary function is
+\begin{align}
+U_g(x,s) &= A(s) e^{x\sqrt{\frac{s}{\kappa}}} + B(s) e^{-x\sqrt{\frac{s}{\kappa}}} \label{eq:heat_general_solution_201912}
+\end{align}
+where $A(s)$ and $B(s)$ are functions in the Laplace domain which we need to determine from the boundary conditions.
+
+Before we find the two functions we need to take care of the inhomogeneity of the differential equation. The trial solution for the particular integral for the inhomogeneous differential equation (\ref{eq:heat_laplace_201912}) is 
+\begin{align*}
+U_p(x,s) &= Px\exp(-\alpha x) + Q\exp(-\alpha x)
+\end{align*}
+where the coefficients $P$ and $Q$ need to be determined. We calculate the first and second derivatives of $U_p$
+\begin{align*}
+\frac{\partial U_p(x,s)}{\partial x} &= P\exp(-\alpha x) - P\alpha x\exp(-\alpha x) - Q\alpha\exp(-\alpha x) \\
+\frac{\partial^2 U_p(x,s)}{\partial x^2} &= -2P\alpha\exp(-\alpha x) + P\alpha^2 x \exp(-\alpha x) + Q\alpha^2\exp(-\alpha x) 
+\end{align*}
+
+We substitute $U_p$ and its second derivative with respect to $x$ into Eq. (\ref{eq:heat_laplace_201912}) and get
+\begin{align*}
+-2P\alpha\exp(-\alpha x) + P\alpha^2 x \exp(-\alpha x) + Q\alpha^2\exp(-\alpha x) & \\
+- \frac{s}{\kappa}\left( Px\exp(-\alpha x) + Q\exp(-\alpha x)\right) &= \frac{-1}{\kappa}x\exp(-\alpha x)
+\end{align*}
+
+We can arrange this in terms of $\exp(-\alpha x)$ and $x\exp(-\alpha x)$
+$$
+\exp(-\alpha x) \left[-2P\alpha + Q\alpha^2 - \frac{Qs}{\kappa}\right] + x\exp(-\alpha x) \left[P\alpha^2 -\frac{Ps}{\kappa} + \frac{1}{\kappa}\right] = 0
+$$
+From this we get two equations 
+\begin{align*}
+-2P\alpha + Q\alpha^2 - \frac{Qs}{\kappa} &= 0 \\
+ P\alpha^2 -\frac{Ps}{\kappa} + \frac{1}{\kappa} &= 0
+\end{align*}
+
+From this it follows that
+\begin{align*}
+P &= \frac{1}{s - \kappa\alpha^2} \\
+Q &= \frac{-2\alpha\kappa}{(s - \kappa\alpha^2)(s - \kappa\alpha^2)} = \frac{-2\alpha\kappa}{\left(s - \kappa\alpha^2\right)^2} 
+\end{align*}
+for $\Re(s)>|\kappa^2\alpha^4|$ .
+
+Thus, the general solution of the differential equation is of the form
+\begin{align*}
+U(x,s) &= A(s) e^{x\sqrt{\frac{s}{\kappa}}} + B(s) e^{-x\sqrt{\frac{s}{\kappa}}} + \frac{1}{s - \kappa\alpha^2} x \exp(-\alpha x) + \frac{-2\alpha\kappa}{\left(s - \kappa\alpha^2\right)^2} \exp(-\alpha x)
+\end{align*}
+###W05_ex1_parta_end
+
+
+###W05_ex1_partb_start_md
+**Solution:**
+
+From the boundary condition at $x\to\infty$ we know that the solution is bounded. Thus, we can swap the limit and the integration to get
+\begin{align*}
+\lim_{x\to\infty} U(x,s) &= \lim_{x\to\infty} \int_0^\infty e^{-st} u(x,t) dt = \int_0^\infty  e^{-st} \lim_{x\to\infty} u(x,t) dt = 0
+\end{align*}
+From this it follows that
+\begin{align*}
+A(s) &= 0, 
+\end{align*}
+because otherwise the first term on the right hand side of the solution would go to infinity for $x\to\infty$.
+
+The boundary condition at $x=0$ requires that
+\begin{align*}
+U(0,s) &= B(s) + \frac{-2\alpha\kappa}{\left(s - \kappa\alpha^2\right)^2} \overset{!}{=} {\cal L} \left\{u(0,t) \right\} = \frac{-2\kappa\alpha}{(s - \kappa\alpha^2)^2} + \frac{1}{s}, \quad \Re(s)>0,
+\end{align*}
+and thus 
+\begin{align*}
+ B(s) &= \frac{1}{s}
+\end{align*}
+
+With $B(s)$ we get the solution in the Laplace domain 
+\begin{align*}
+U(x,s) &= \frac{1}{s} e^{-x\sqrt{\frac{s}{\kappa}}} + \frac{1}{s - \kappa\alpha^2} x \exp(-\alpha x) + \frac{-2\alpha\kappa}{\left(s - \kappa\alpha^2\right)^2} \exp(-\alpha x)
+\end{align*}
+
+We can find the solution in the time domain by using the Laplace transforms given in Table. 
+\begin{align*}
+u(x,t) &= \text{erfc}\left(\frac{x}{2\sqrt{t\kappa}} \right) + \exp(\kappa\alpha^2 t) x \exp(-\alpha x) - 2\kappa\alpha t \exp(\kappa \alpha^2 t) \exp(-\alpha x), t\ge 0.
+\end{align*}
+###W05_ex1_partb_end
+
+
+###W05_ex1_partc_start_md
+**Solution:**
+
+###W05_ex1_partc_end
