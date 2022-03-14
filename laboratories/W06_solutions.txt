@@ -1,0 +1,245 @@
+###W06_ex1_parta_start_md
+**Solution:**
+
+We derive the Crank-Nicholson method using a weighted average of the old and new time level data, I'm going to substitute $T/S = \kappa$ 
+$$\frac{h^n_{i-1}-2h^n_i+h^n_{i+1}}{2\Delta x^2}+\frac{h^{n+1}_{i-1}-2h^{n+1}_i+h^{n+1}_{i+1}}{2\Delta x^2}=\frac{h_{i}^{n+1}-h_{i}^n}{\kappa\Delta t}.$$
+Multiplying B.S. by ${\kappa\Delta t}$
+$$\frac{\kappa\Delta t}{2\Delta x^2}\left(h^n_{i-1}-2h^n_i+h^n_{i+1}\right) 
++ \frac{\kappa\Delta t}{2\Delta x^2}\left(h^{n+1}_{i-1}-2h^{n+1}_i+h^{n+1}_{i+1}\right) = h_{i}^{n+1}-h_{i}^n$$
+Putting all the $h^{n+1}$ values on the LHS and $h^{n}$ on the RHS (and multiplying by -1 BS)
+$$h_{i}^{n+1}-\frac{\kappa\Delta t}{2\Delta x^2}\left(h^{n+1}_{i-1}-2h^{n+1}_i+h^{n+1}_{i+1}\right) = h_{i}^n+\frac{\kappa\Delta t}{2\Delta x^2}\left(h^n_{i-1}-2h^n_i+h^n_{i+1}\right) $$
+Gathering terms (and writing $r_x=\frac{\kappa\Delta t}{2\Delta x^2}$), we have
+$$-r_x h^{n+1}_{i-1} + (2+2r_x)h^{n+1}_i-r_x h^{n+1}_{i-1} = r_xh^n_{i-1}+(2-2r_x)h^n_i+r_xh^n_{i+1}$$
+So $$r_x= \frac{\kappa\Delta t}{2\Delta x^2},\, \alpha =  2+2r_x \text{ and }\beta=2-2r_x.$$
+###W06_ex1_parta_end
+
+
+###W06_ex1_partb_start_md
+**Solution:**
+
+1. The Neumann BC at $h_x=0$ can be discretised using the 2nd order central finite difference approximation:
+$$0=\frac{h_{i+1}-h_{i-1}}{2\Delta x}  \rightarrow h_{i-1}=h_{i+1}$$
+At $i=0$ we need to rewrite the stencil as 
+$$(2+2r_x)h^{n+1}_0-2r_x h^{n+1}_{1} = (2-2r_x)h^n_0+2r_xh^n_{1}$$
+2. The Dirichlet BC implies that $h_9=1.0$ for all $t$.  So when $i=8$ we have
+$$-r_x h^{n+1}_{i-1} + (2+2r_x)h^{n+1}_i-r_x \times 1 = r_xh^n_{i-1}+(2-2r_x)h^n_i+r_x \times 1$$
+putting all the known values on the RHS we have
+$$-r_x h^{n+1}_{i-1} + (2+2r_x)h^{n+1}_i = r_xh^n_{i-1}+(2-2r_x)h^n_i+2r_x$$
+###W06_ex1_partb_end
+
+###W06_ex1_partc_start_py
+import numpy as np
+
+KAPPA = 3.33e-6/2e-3 # Coefficient
+X1 = 25.0 # domain length
+H1 = 1.0 # head at RH boundary 
+
+def Crank_Nicholson(N, nu, t_stop, Quiet = True):
+    from scipy.sparse import diags
+    from scipy.linalg import solve
+
+    # create the grid
+    x_ord = np.linspace(0, X1 ,N)
+    dx = x_ord[1]-x_ord[0]
+    if (not Quiet):
+        print("dx = {:.3g} m".format(dx))
+
+    # calculate the time step
+    dt = 1.0
+    if (not Quiet):
+        print("dt = {:.3g} s".format(dt))
+        
+    # calculate Rx
+    Rx = KAPPA*dt/(2*dx**2)
+    alpha = (2+2*Rx)
+    beta = (2-2*Rx)
+    if (not Quiet):
+        print("rx = {:.3g}, alpha = {:.3g}, beta = {:.3g} "
+                     .format(Rx,alpha,beta))
+    
+    # The first step of the Crank Nicholson method is to assemble two
+    # tri-diagonal matrices A and B containing the coefficients, we
+    # form the tridiagonal matrices using scipy diags function.  
+    # The coefficients do not change during solution.
+    A = diags([[-Rx for i in range(N-1) ],  \
+                    [alpha for i in range(N)], \
+                    [-2*Rx] + [-Rx for i in range(N-2) ]], [-1, 0, 1] )
+        
+    B = diags([[Rx for i in range(N-1) ],  \
+                    [beta for i in range(N)], \
+                    [2*Rx] + [Rx for i in range(N-2) ]], [-1, 0, 1] )
+
+    if (not Quiet):
+        print("A: ", A.toarray())
+        print("B: ", B.toarray())
+
+    return A, B
+
+''' Main program '''
+x, h = Crank_Nicholson(11, 2.0, 1.0, Quiet = False)
+###W06_ex1_partc_end
+
+###W06_ex1_partd_start_py
+    # calculate the b_prime vector which is used to apply the Dirichlet
+    # boundary conditions.
+    b_prime = np.zeros(N)
+    b_prime[-1] =  2*Rx*H1
+    
+    if (not Quiet):
+        print("b_prime = ",b_prime)
+###W06_ex1_partd_end
+
+###W06_ex1_parte_start_py
+   # Set up the initial values of h
+    h = np.ones(N)
+    
+    # Solve the system using the linear algebra solver
+    b_vec =  B @ h + b_prime
+    
+    if not Quiet:
+        print('b = ',b_vec)
+
+    h = solve(A.toarray(),b_vec)
+
+    if (not Quiet):
+        print('resid = ',A@h - b_vec)
+        print('h = ',h)
+
+    return x_ord,h
+###W06_ex1_parte_end
+
+###W06_ex1_partf_start_md
+**Solution:**
+
+The first task is to compute the time step.  This is simply
+$$\Delta t = \nu \frac{\Delta x^2}{2\kappa}$$
+
+<code>dt = nu * dx**2/(2*KAPPA)</code>
+
+We now need a loop for time, this can be done with a while loop or a for loop with a break statement.  I'm going to use the while loop.
+###W06_ex1_partf_switch_py
+    # time loop, here we only need to solve the system and check the
+    # time step as the coefficient matrices and Dirichlet BC do not
+    # depend on time.
+    t = 0.0
+    it = 0
+    while t<t_stop:        
+        # Calculate the time step
+        dt = min (dt, t_stop-t) 
+    
+        # Update the b_vector with last times solution.
+        b_vec =  B @ h + b_prime
+        
+        # Solve the system using the linear algebra solver
+        h = solve(A.toarray(),b_vec)
+
+        # Update time
+        t = t + dt
+        it = it + 1
+        
+        if (not Quiet):
+            err = max(A@h - b_vec)
+            print('{:>8} {:.1f} {:.4e}'.format(it,t,err))
+
+    return x_ord,h
+###W06_ex1_partf_switch_md
+Finally update the main programme
+
+###W06_ex1_partf_switch_py
+''' Main program '''
+hours = 3600 # seconds
+x, h = Crank_Nicholson(11, 2.0, 12 * hours, Quiet = False)
+print('Done.')
+print(h)
+###W06_ex1_partf_switch_md
+Giving
+
+###W06_ex1_partf_switch_py
+       1 3753.7538 0.0000e+00
+       2 7507.5075 0.0000e+00
+       3 11261.2613 0.0000e+00
+       4 15015.0150 0.0000e+00
+       5 18768.7688 0.0000e+00
+       6 22522.5225 0.0000e+00
+       7 26276.2763 0.0000e+00
+       8 30030.0300 0.0000e+00
+       9 33783.7838 0.0000e+00
+      10 37537.5375 0.0000e+00
+      11 41291.2913 0.0000e+00
+      12 43200.0000 0.0000e+00
+Done.
+[1. 1. 1. 1. 1. 1. 1. 1. 1. 1. 1.]
+###W06_ex1_partf_switch_md
+As expected.
+
+###W06_ex1_partf_end
+
+###W06_ex2_parta_start_md
+**Solution:**
+
+Lest look at using the Celuloid library. At the start of the Python code we need
+
+<code>
+from matplotlib import pyplot as plt
+from celluloid import Camera
+</code>
+
+We now need to create a plot outside of the time loop and  attach the _Camera_
+
+<code>
+# Create a plot and initialise a camera for the animation
+    if (t_plot>0):
+        fig = plt.figure()
+        camera = Camera(fig)
+    last_plot = 0.0
+</code>
+
+Inside the main loop we add routines for plotting 
+
+<code>
+        if (t_plot>0) and (t-last_plot>t_plot):
+            plt.plot(x_ord,h,'-b')
+            plt.xlabel('x (m)')
+            last_plot = t
+            camera.snap()
+            print('{:>8} {:.1f}'.format(it,t))
+</code>
+
+and then save the plot at the end of the <code>Crank\_Nicholson</code> function
+
+<code>
+    # Save the plot
+    if (t_plot>0):
+        animation = camera.animate()
+        animation.save('filter.gif', writer = 'imagemagick')
+
+    return x_ord,h
+</code>
+
+Solving the problem needs updated initial conditions:
+
+<code>
+    # Set up the initial values of h
+    h = 1.6 * np.ones(N)
+</code>
+
+and a change to the main loop
+
+<code>
+''' Main program '''
+hours = 3600 # seconds
+x, h = Crank_Nicholson(101, 2.0, 48 * hours, Quiet = True, t_plot=hours)
+print('Done.')
+fig = plt.figure()
+plt.plot(x,h)
+plt.show()
+</code>
+
+###W06_ex2_parta_end
+
+
+
+
+
+
+
