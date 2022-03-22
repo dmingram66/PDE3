@@ -1,0 +1,153 @@
+###W07_ex1_parta_start_md
+**Solution:**
+
+If $v=ru$, then differentiating produces
+\begin{align*}
+\pderiv{v}{r} &= u + r\pderiv{u}{r} \\
+\pdderiv{v}{r} &= 2 \pderiv{u}{r} + r\pdderiv{u}{r}
+\end{align*}
+and hence
+$$
+\pdderiv{u}{r} + \frac{2}{r} \pderiv{u}{r}  = \frac{1}{r}\pdderiv{v}{r}
+$$
+Inserting this into the spherically symmetric form of the heat conduction equation gives
+$$
+\frac{1}{r} \pdderiv{v}{r} = \frac{1}{\kappa r}\pderiv{v}{t}
+$$
+which after cancelling out the $r$ gives the standard one-dimensional heat conduction equation.
+
+If $v$ remains bounded for $r\to\infty$ the solution $u\to0$ for $r\to\infty$.
+###W07_ex1_parta_end
+
+
+###W07_ex1_partb_start_md
+**Solution:**
+
+We solve the standard one-dimensional heat conduction equation for $v(r,t) = r u(r,t)$. Since $u=\frac{v}{r}$, the boundary conditions for $v$ are
+\begin{align*}
+u(a,t) &= T_0 \xrightarrow{yields} v(a,t) = aT_0, \quad & t>0 \\
+u(b,t) &= 0 \xrightarrow{yields} v(b,t) = 0, \quad & t>0 \\
+u(r,0) &= 0 \xrightarrow{yields} v(r,0) = 0, & a\le r\le b
+\end{align*}
+
+First, we need to find the steady state solution $V(r)$ for which $v(r,t) = V(r) + w(r,t)$. Since the inner boundary is held at $aT_0$ and the outer at $0$, we get a linearly decreasing temperature from the inner to the outer boundary
+$$
+V(r) = aT_0\frac{b - r}{b - a}
+$$
+
+With this steady state solution we get the following boundary conditions for the transient part $w(r,t)$
+\begin{align*}
+w(a,t) &= 0, \quad & t>0 \\
+w(b,t) &= 0, \quad & t>0 \\
+w(r,0) &= -aT_0\frac{b - r}{b - a}, & a\le r\le b
+\end{align*}
+
+From the lectures we know that the solution of the one-dimensional heat conduction equation has the form
+$$
+w(r, t) =\sum_{N=1}^\infty e^{-\kappa \lambda_N^2 t} \left(a_N\sin(\lambda_N (r + \phi)) + b_N\cos(\lambda_N r)\right)
+$$
+and that we need to find the parameters $\lambda_N$, $a_N$ and $b_N$. We have added a shift of the sine so that we can better handle the boundary conditions. We can easily check that this is also a solution to the heat conduction equation.
+
+We set $b_N=0$ for all $N$ since there is no cosine term in the sought solution and check if we can still match all boundary conditions. To match the condition at $r=a$ we shift the sine so that its argument is zero: $\phi = - a$. 
+
+From the second boundary condition at $r=b$ we see that 
+$$
+\lambda_N = \frac{N\pi}{b-a}, \quad N=1,2,\dots
+$$
+Thus, we get
+$$
+w(r, t) =\sum_{N=1}^\infty a_N e^{-\kappa \lambda_N^2 t} \sin\left(\frac{r-a}{b-a}N\pi\right)
+$$
+and the complete solution as
+$$
+u(r,t) = \frac{1}{r}(V(r) + w(r,t)) =  \frac{a T_0}{r} \left[\frac{b-r}{b-a} - \sum_{N=1}^\infty A_N e^{-\kappa\lambda^2 t} \sin\left(\frac{r-a}{b-a}N\pi\right) \right]
+$$
+where $a_N = -aT_0 A_N$ for all $N$.
+
+To find the parameters $A_N$ we need to solve the Fourier problem
+\begin{align*}
+\frac{b-r}{b-a} &= \sum_{N=1}^\infty A_N \sin\left(\frac{r-a}{b-a}N\pi\right)
+\end{align*}
+The coefficients can be obtained from integration or from standard tables of Fourier series as
+$$
+A_N = \frac{2}{\pi N}, \quad N=1,2,3,\dots
+$$
+###W07_ex1_partb_end
+
+
+###W07_ex1_partc_start_md
+**Solution:**
+
+We have 
+$$
+\pdderiv{u}{r} + \frac{2}{r}\pderiv{u}{r} = \frac1\kappa\pderiv{u}{t}.
+$$
+Using the 2nd order finite difference approximations for the spatial derivatives and the forard first order approximation for the time derivative.
+
+$$ \begin{align*}
+\pdderiv{u}{r} &\approx \frac{u^n_{i-1}-2u_i+u_{i+1}}{\Delta r^2} \\
+\pderiv{u}{r} &\approx \frac{u^n_{i+1}-u_{i+1}}{2\Delta r} \\
+\pderiv{u}{t} &\approx \frac{u^{n+1}_{i}-u^n_{i}}{\Delta t} \\
+\end{align*} $$
+
+Substituting into the governing equation:
+
+$$ \frac{u^n_{i-1}-2u^n_i+u^n_{i+1}}{\Delta r^2} + \frac{2}{r_i}\frac{u^n_{i+1}-u^n_{i+1}}{2\Delta r} = \frac1\kappa\frac{u^{n+1}_{i}-u^n_{i}}{\Delta t} $$
+
+multiply bs by $\kappa\Delta t$
+
+$$ \frac{\kappa\Delta t}{\Delta r^2}\left(u^n_{i-1}-2^nu_i+u^n_{i+1}\right) + \frac{\kappa\Delta t}{r_i\Delta r}\left(u^n_{i+1}-u^n_{i+1}\right) = u^{n+1}_{i}-u^n_{i}. $$
+
+Rearranging
+
+$$ u^{n+1}_i = u^n_i + \frac{\kappa\Delta t}{\Delta r^2}\left(u^n_{i-1}-2^nu_i+u^n_{i+1}\right) + \frac{\kappa\Delta t}{r_i\Delta r}\left(u^n_{i+1}-u^n_{i+1}\right). $$
+
+Now the FTCS would be 
+$$u^{n+1}_i = u^n_i + \frac{\kappa\Delta t}{\Delta r^2}\left(u^n_{i-1}-2^nu_i+u^n_{i+1}\right)$$
+
+So we can see that we need the FTCS scheme with an additional term,
+$$\frac{\kappa\Delta t}{r_i\Delta r}\left(u^n_{i+1}-u^n_{i+1}\right),$$ 
+which depends on the radius at the point $i$.
+
+###W06_ex1_partf_switch_py
+# Copy the grid class from the explicit parabolic solver workbook here.
+
+# Now we have coppied the Grid class from the Explicit-Parabolic Solver workbook we can set up the problem.
+def hot_bc(x):
+    return 100.0
+
+def cold_bc(x):
+    return 0.0
+
+def u_init(x):
+    return 0.0*x
+
+test = Grid(101)
+test.set_x0(0.1)
+test.set_x1(1.0)
+test.generate()
+test.set_Delta_t(0.95)
+test.set_Dirichlet_bc('right',cold_bc)
+test.set_Dirichlet_bc('left',hot_bc)
+test.initial_conditions(u_init)
+test.plot('Spherical heat transfer')
+print(test)
+
+# Now implement the spherical FTCS scheme
+def FTCS_sphere(grid):
+    '''perform one time step using the FTCS for the spherically
+    symmetric heat transfer equation on the parabolic problem 
+    defined by grid. We are using whole array opperations
+    for speed.'''
+    Rx2 = grid.kappa*grid.Delta_t/grid.Delta_x()**2
+    Rx1 = grid.kappa*grid.Delta_t/grid.x*grid.Delta_x()
+
+    u = grid.u[-1].copy()
+    u[1:-1]=u[1:-1]+Rx2*(u[0:-2]-2*u[1:-1]+u[2:])+Rx1[1:-1]*(u[2:]-u[0:-2])
+    return u
+
+test.integrate(1.0, FTCS_sphere)
+test.plot('Spherical heat transfer')
+print(test)
+
+###W07_ex1_partc_end
