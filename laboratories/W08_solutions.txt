@@ -1,0 +1,110 @@
+###W08_ex1_parta_start_py
+def GridGen(N):
+    ''' generate a 1D grid from over [0.0,1.0] with N grid points.'''
+    x_ord = np.linspace(0.0, 1.0 ,N)
+    dx = x_ord[1]-x_ord[0]
+    
+    return dx, x_ord
+###W08_ex1_parta_end
+
+###W08_ex1_partb_start_py
+def InitialConditions(x_ord):
+    ''' set up the intial conditions so that u(x)=sin^4(2 Pi x) for x
+    in [0.0,0.5] and u(x) = 1 for x in [4/6,5/6] and u(x)=0
+    otherwise.  These are the initial conditions for the classical
+    test problem.'''
+
+    # initialise everythging to zero
+    u = np.zeros(N)
+
+    # set up the Gaussian wave
+    for i in range(N//2):
+        u[i]=np.sin(x_ord[i]*np.pi*2)**4
+
+    # and the top hat
+    n0 = 4*N//6
+    n1 = 5*N//6+1
+    u[n0:n1] = 1.0
+
+    return u
+###W08_ex1_partb_end
+
+###W08_ex1_partc_start_py
+def TimeStep(dx):
+    ''' calculate the time step '''
+    return CourantNumber * dx / abs(AdvectionSpeed)
+###W08_ex1_partc_end
+
+###W08_ex1_partd_start_py
+def FOU(u,dx,dt):
+    ''' this is the classical First Order Upwind scheme, this is first
+    order in time and space and has a stability condition that
+    nu<=1.
+
+    The periodic boundary conditions are handled using np.roll() which
+    shifts an array left or right rolling round the end values.'''
+    u =  u - AdvectionSpeed*dt/dx*(u-np.roll(u,-1))
+    return u, 'FOU'
+###W08_ex1_partd_end
+
+###W08_ex1_parte_start_md
+* at $t=0.5$ the position of the square wave and the Gaussian bump are reversed as expected.
+* at $t=1.0$ the waves are superimposed in the correct position, the square wave has been rounded off a little and is wider at the base than expected.
+* at $t=10.0$ the wave positions are a little to the right of their expected location (this _phase error_ is caused by higher order terms in the trunction error), furthermore the Gaussian wave has spread and lost amplitude (a dissipation error) and the square wave is very rounded.
+* By $t=50.0$ the waves have dispersed significantly and the phase error is more noticeable.  At this time the waves have lost more than 20\% of amplitude and both look much more sinusoidal than their original shape.  The solution at this time needs a much finer grid if the FOU scheme is to be used.
+###W08_ex1_parte_end
+
+###W08_ex2_parta_start_py
+def LaxFriedrichs(u,dx,dt):
+    '''Classical Lax-Friedrichs scheme'''
+    u = (np.roll(u,+1)+np.roll(u,-1))/2 - \
+      AdvectionSpeed*dt/(2*dx) * (np.roll(u,+1)-np.roll(u,-1))
+    return u, 'Lax-Friedrichs'
+###W08_ex2_parta_switch_md
+* at $t=1.0$ the waves are superimposed in the correct position, the square wave has been rounded off a little and is wider at the base than expected, it also appears to have a jagged edge.
+* at $t=10.0$ the wave positions are a little to the right of their expected location (_phase error_ once again), furthermore the Gaussian wave has spread and lost amplitude (a dissipation error) and the square wave is very rounded.
+* By $t=50.0$ the waves have dispersed significantly and the phase error is more noticeable.  At this time the waves have lost more than 40\% of amplitude and both look much more sinusoidal than their original shape.  The solution at this time needs a is worse than that obtained with the FOU scheme.
+###W08_ex2_parta_end
+
+###W08_ex2_partb_start_md
+* Stair-casing is clearly observed on the discontinuities.  This is caused by the averaging of $u^n_{i+1}$ and $u^n_{i-1}$ in the scheme.
+###W08_ex2_partb_end
+
+###W08_ex3_parta_start_py
+def LaxFriedrichs(u,dx,dt):
+    '''Classical Lax-Friedrichs scheme'''
+    u = (np.roll(u,+1)+np.roll(u,-1))/2 - \
+      AdvectionSpeed*dt/(2*dx) * (np.roll(u,+1)-np.roll(u,-1))
+    return u, 'Lax-Friedrichs'
+###W08_ex3_parta_switch_md
+* at $t=1.0$ the waves are superimposed in the correct position, the sides of the square wave are sharp and well resolved, but Gibbs oscillations can be observed to the right of each discontinuity.
+* at $t=10.0$ the Gibbs oscillations are of similar amplitude to those at $t=1$, however they are spread out a little more due to dispersion of these waves. 
+* By $t=50.0$ The phase error in the Gaussian wave is  about 0.1m (20% of the wave length), a similar phase error is seen in the Square wave.  The Gaussian wave has not lost amplitude.  The Square wave has now lost it's shape, but not amplitude and the Gibbs oscillations are being significantly dispersed, almost reaching the Gaussian wave. 
+###W08_ex3_parta_end
+
+###W08_ex4_parta_start_py
+def MacCormack(u,dx,dt):
+    ''' 2nd order MacCormack predictor corrector method which is
+    equivalent to the classical Lax-Wendroff scheme.'''
+
+    # Predictor
+    up = u - AdvectionSpeed*dt/dx * (u - np.roll(u,-1)) 
+    # Corrector
+    u = (u+up)/2 - \
+      AdvectionSpeed*dt/(2*dx) * (np.roll(up,+1)-up)
+
+    return u, 'MacCormack'    
+###W08_ex4_parta_switch_md
+The Lax-Wendroff and MacCormack solutions are identical as expected.
+###W08_ex4_parta_end
+
+
+###W08_ex4_partb_start_md
+Ee can see the Gibbs oscillations occur just behind the left- or right- travelling discontinuity and that the phase error causes the wave to have travelled a little to far.
+###W08_ex4_partb_end
+
+
+
+
+
+
