@@ -1,0 +1,185 @@
+###W09_ex1_parta_start_md
+**Solution:**
+
+Using the separation of variables we need to check which of the basic solutions
+\begin{align*}
+u_1(x,t) &= \cos\lambda ct\sin\lambda x \\
+u_2(x,t) &= \cos\lambda ct\cos\lambda x \\
+u_3(x,t) &= \sin\lambda ct\sin\lambda x \\
+u_4(x,t) &= \sin\lambda ct\cos\lambda x
+\end{align*}
+fulfils the initial conditions. Initial condition (a) requires that we have a sine wave in $x$ which removes solutions $u_2$ and $u_4$. By taking the derivative with respect to $t$ and using initial condition (b) we see that only solution $u_1$ matches the initial conditions. We rename this as
+$$
+u(x,t) = \cos\lambda ct\sin\lambda x
+$$
+From initial condition (a) it follows that
+$$
+\sin x=\cos\lambda0\sin \lambda x\implies \lambda=1
+$$
+So 
+$$
+u(x,t) = \cos ct\sin x
+$$
+Now 
+$$
+u_t(x,t) = -c\sin ct\sin x\implies\pderiv{u(x,0)}{t}=0
+$$
+so initial condition (b) is also satisfied and $u(x,t)$ is a solution to the given wave equation.
+###W09_ex1_parta_end
+
+###W09_ex1_partb_start_md
+**Solution:**
+
+The d'Alembert solution is given by
+$$
+u(x,t) = \frac12\left[F(x+ct)+F(x-ct)\right] +\frac{1}{2c}\int_{x-ct}^{x+ct} G(z)\ \text{d}z
+$$
+where
+$$
+F(x)=u(x,0)\text{ and }G(x)=\pderiv{u(x,0)}{t}
+$$
+We have $G(x)=0$ and $F(x)=\sin x$, so
+\begin{align*}
+u(x,t) &= \frac12\left[\sin(x+ct)+\sin(x-ct)\right]+\frac{1}{2c}\int_{x-ct}^{x+ct} 0\ \text{d}z \\
+&= \frac12\left[\sin(x+ct)+\sin(x-ct)\right]
+\end{align*}
+Using trigonometric identities to bring into the same form as for the separated solution we get
+\begin{align*}
+u(x,t) &= \frac12\left[\cos ct\sin x+\sin ct\cos x+\cos ct\sin x-\sin ct\cos x\right] \\
+&= \frac12\left[2\cos ct\sin x\right] \\
+&= \cos ct\sin x
+\end{align*}
+
+So, the two solutions are the same.
+###W09_ex1_partb_end
+
+###W09_ex2_start_md
+**Solution:**
+
+Consider the following equation
+$$
+u(r,t) = \frac{1}{r}(f(ct-r) + g(ct+r))
+$$
+We must differentiate this with respect to the inward travelling and outward travelling waves. Let $f^\prime$ be the derivative with respect to $ct-r$ and $\dot{g}$ be the derivative with respect to $ct+r$. 
+
+By differentiating the above equation we get the partial derivatives
+$$
+\frac{1}{c^2}u_{tt} = \frac{1}{r}\left[f^{\prime\prime}(ct-r)+\ddot{g}(ct+r)\right]
+$$
+and
+\begin{align*}
+u_r &= -\frac{1}{r^2}\left[f(ct-r)+g(ct+r)\right]+\frac{1}{r}\left[-f^\prime(ct-r)+\dot{g}(ct+r)\right] \\
+u_{rr} &= \frac{2}{r^3}\left[f(ct-r)+g(ct+r)\right]-\frac{2}{r^2}\left[-f^\prime(ct-r)+\dot{g}(ct+r)\right] \\
+&+ \frac{1}{r}\left[f^{\prime\prime}(ct-r)+\ddot{g}(ct+r)\right]
+\end{align*}
+
+We insert these partial derivatives into the spherically symmetric wave equation, collect terms and simplify it
+\begin{align*}
+\frac{1}{c^2}u_{tt}-u_{rr}-\frac{2}{r}u_r =& 
+\frac{1}{r^3}\left[r^2(f^{\prime\prime}+\ddot{g})-2(f+g)-2r(f^\prime-\dot{g}) -r^2(f^{\prime\prime}+\ddot{g})+2(f+g)+2r(f^\prime-\dot{g})\right] = 0
+\end{align*}
+
+This shows that the equation satisfies the PDE for any functions $f$ and $g$. These functions represent expanding and converging waves. Note the singular behaviour when $r=0$.
+###W09_ex2_end
+
+###W09_ex3_start_md
+**Solution:**
+
+The d'Alembert solution is given by
+$$
+u(x,t) = \frac12\left[F(x+ct)+F(x-ct)\right] +\frac{1}{2c}\int_{x-ct}^{x+ct} G(z)\ \text{d}z
+$$
+where 
+$$
+F(x) = u(x,0)\text{ and }G(x)=\pderiv{u(x,0)}{t}
+$$
+We have 
+$$
+G(x)=0 \text{ and } 
+F(x)=\begin{cases}
+1-x & 0\le x \le 1 \\
+1+x & -1 \le x \le 0 \\
+0 & \text{otherwise}
+\end{cases}
+$$
+Inserting this into the general formula we get
+\begin{align*}
+u &= \frac12\left[F(x+ct)+F(x-ct)\right]+\frac{1}{2c}\int_{x-ct}^{x+ct} 0\ \text{d}z \\
+&= \frac12\left[F(x+ct)+F(x-ct)\right]
+\end{align*}
+which is the solution for all $x$ and $t>0$.
+###W09_ex3_end
+
+###W09_ex4_start_md
+**Solution:**
+
+The four basic solution types are
+\begin{align*}
+u_1(x,t) &= \cos\lambda ct\sin\lambda x \\
+u_2(x,t) &= \cos\lambda ct\cos\lambda x \\
+u_3(x,t) &= \sin\lambda ct\sin\lambda x \\
+u_4(x,t) &= \sin\lambda ct\cos\lambda x
+\end{align*}
+From these possible separated solutions conditions (a) and (b) imply that
+$$
+u(x,t) = \cos\lambda ct\sin\lambda x.
+$$
+
+Condition (c) requires that
+$$
+\sin\lambda\pi = 0\ \implies\ \lambda=N,
+$$
+where $N$ is an integer.
+
+The wave equation is linear and thus we can superimpose the solutions for all values of $N$ which gives
+$$
+u(x,t) = \sum_{N=1}^\infty b_N\cos  Nct\sin Nx
+$$
+
+Using the initial condition (d) we get
+$$
+u(x,0) = \sum_{N=1}^\infty b_N\sin Nx = x(\pi+x)(\pi-x)
+$$
+
+We now find the coefficients using the Fourier series expansion.
+\begin{align*}
+b_n &= \frac{2}{\pi}\int_0^\pi x(\pi+x)(\pi-x)\sin(nx)\text{ d}x \\
+&=\frac{2}{n^2\pi}\left[{\pi }^{2}\left( \sin nx -nx\cos nx \right) -\frac{\left( 3{n}^{2}{x}^{2}-6\right) \sin nx 
++\left( 6nx-{n}^{3}{x}^{3}\right) \cos nx }{{n}^{2}}\right]_0^\pi\\
+&= -\frac{12(-1)^n}{n^3}
+\end{align*}
+So the solution is
+$$
+u(x,t) = -\sum_{N=1}^\infty \frac{12(-1)^N}{N^3}\cos  Nct\sin Nx
+$$
+for $0\le x \le\pi$ and $t>0$.
+###W09_ex4_end
+
+###W09_ex5_start_md
+**Solution:**
+
+The d'Alembert solution is given by 
+$$
+u(x,t) = \frac12\left[F(x+ct)+F(x-ct)\right] +\frac{1}{2c}\int_{x-ct}^{x+ct} G(z)\ \text{d}z
+$$
+where 
+$$
+F(x) = u(x,0)\text{ and }G(x)=\pderiv{u(x,0)}{t}.
+$$
+We can directly insert $F(x)=\cos(x)$ into the solution but need to calculate the integral of $G(x)$. For 
+$$
+G(x) = x\exp(-x^2)
+$$
+we get 
+\begin{align*}
+ \frac{1}{2c}\int_{x-ct}^{x+ct} G(z)\ \text{d}z &= \frac{1}{2c}\int_{x-ct}^{x+ct} z\exp(-z^2)\ \text{d}z = \frac{1}{2c}\left[\frac{-1}{2} \exp(-z^2)\right]_{x-ct}^{x+ct} \\
+ &= \frac{1}{4c} (\exp(-(x-ct)^2) - \exp(-(x+ct)^2)
+\end{align*}
+In the integral we used the variable $z$ to distinguish the independent variable of the function $G$ from the limits of the integration.
+
+After solving the integral we get the following solution
+\begin{align*}
+u(x,t) &= \frac12\left[\cos(x+ct)+\cos(x-ct)\right]+\frac{1}{4c} (\exp(-(x-ct)^2) - \exp(-(x+ct)^2)
+\end{align*}
+for all $x$ and $t>0$.
+###W09_ex5_end
